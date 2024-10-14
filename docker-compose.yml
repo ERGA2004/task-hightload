@@ -1,0 +1,41 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:80"
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_NAME=mydb
+      - JWT_SECRET=supersecret
+    depends_on:
+      - db
+    ports:
+      - "3002:3002"
+
+  task-service:
+    build: ./task-service
+    container_name: task-service
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=admin
+      - DB_NAME=mydb
+    depends_on:
+      - db
+    ports:
+      - "3003:3003"
+
+  db:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3307:3306"
